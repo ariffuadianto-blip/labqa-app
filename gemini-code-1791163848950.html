@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LabQA - ISO 17025 Manager</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .clause-card { transition: all 0.2s ease; }
+        .clause-card:hover { transform: translateY(-2px); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
+        .completed-text { text-decoration: line-through; color: #9ca3af; }
+        
+        /* Custom scrollbar for content area */
+        .content-area::-webkit-scrollbar { width: 6px; }
+        .content-area::-webkit-scrollbar-track { background: transparent; }
+        .content-area::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .content-area::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="h-screen flex overflow-hidden text-slate-800">
+
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white border-r border-slate-200 flex flex-col hidden md:flex z-10 shadow-sm">
+        <div class="h-20 flex items-center px-6 border-b border-slate-100">
+            <div class="bg-blue-600 text-white p-2 rounded-lg mr-3 shadow-sm">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+            </div>
+            <div>
+                <h1 class="font-bold text-lg leading-tight">LabQA</h1>
+                <p class="text-xs text-slate-500 font-medium">ISO 17025 Manager</p>
+            </div>
+        </div>
+
+        <nav class="flex-1 px-4 py-6 space-y-2">
+            <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full flex items-center px-4 py-3 bg-blue-50 text-blue-700 rounded-xl font-medium transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
+                Acak Tugas
+            </button>
+            <button onclick="switchTab('riwayat')" id="nav-riwayat" class="w-full flex items-center px-4 py-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 rounded-xl font-medium transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                Riwayat Tugas
+            </button>
+            <button class="w-full flex items-center px-4 py-3 text-slate-400 cursor-not-allowed rounded-xl font-medium">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path></svg>
+                Laporan LIMS <span class="ml-auto text-[10px] bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full">Soon</span>
+            </button>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col h-screen overflow-hidden">
+        
+        <!-- Mobile Header (Visible only on small screens) -->
+        <div class="md:hidden bg-white h-16 border-b flex items-center px-4 shadow-sm">
+            <div class="bg-blue-600 text-white p-1.5 rounded mr-3">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+            </div>
+            <h1 class="font-bold text-lg">LabQA</h1>
+            
+            <div class="ml-auto flex gap-2">
+                <button onclick="switchTab('dashboard')" class="text-xs bg-blue-50 text-blue-700 px-3 py-1.5 rounded border border-blue-100">Acak</button>
+                <button onclick="switchTab('riwayat')" class="text-xs bg-white text-slate-600 px-3 py-1.5 rounded border">Riwayat</button>
+            </div>
+        </div>
+
+        <!-- Scrollable Content Area -->
+        <div class="flex-1 overflow-y-auto content-area p-6 md:p-10">
+            
+            <!-- TAB 1: DASHBOARD (Acak Tugas) -->
+            <div id="tab-dashboard" class="max-w-5xl mx-auto block">
+                <div class="mb-8">
+                    <h2 class="text-3xl font-bold text-slate-900 mb-2">Tugas Harian Mutu</h2>
+                    <p class="text-slate-500">Acak klausul ISO/IEC 17025:2017 untuk diperiksa atau dikerjakan hari ini.</p>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                    <!-- Stat 1 -->
+                    <div class="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm flex items-center">
+                        <div class="w-12 h-12 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-500 mr-4">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-slate-500">Total Klausul Utama</p>
+                            <p class="text-2xl font-bold text-slate-800" id="stat-total">30</p>
+                        </div>
+                    </div>
+                    <!-- Stat 2 -->
+                    <div class="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm flex items-center">
+                        <div class="w-12 h-12 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-500 mr-4">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-slate-500">Tugas Selesai</p>
+                            <p class="text-2xl font-bold text-slate-800" id="stat-completed">0</p>
+                        </div>
+                    </div>
+                    <!-- Stat 3 -->
+                    <div class="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm flex items-center">
+                        <div class="w-12 h-12 rounded-full bg-amber-50 flex items-center justify-center text-amber-500 mr-4">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-slate-500">Hari Ini</p>
+                            <p class="text-lg font-bold text-slate-800 tracking-tight" id="stat-date">-</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Action Area -->
+                <div class="bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-sm">
+                    <!-- Top section of card (light purple/blue background) -->
+                    <div class="bg-gradient-to-r from-indigo-50 to-blue-50 px-8 py-10 text-center border-b border-slate-100 relative">
+                        <button onclick="randomizeClause()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-full shadow-md transition transform hover:-translate-y-0.5 inline-flex items-center">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                            Mulai Acak Klausul
+                        </button>
+                    </div>
+                    
+                    <!-- Result Area (Hidden initially) -->
+                    <div id="result-area" class="hidden px-8 py-10 bg-white">
+                        <div class="max-w-3xl mx-auto">
+                            <div class="inline-block bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider mb-4" id="result-category">
+                                KLAUSUL X
+                            </div>
+                            <h3 id="result-title" class="text-4xl font-extrabold text-slate-900 mb-8 tracking-tight"></h3>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                                <div class="bg-slate-50 rounded-2xl p-6 border border-slate-100">
+                                    <h4 class="font-bold text-slate-800 mb-3 flex items-center">
+                                        <svg class="w-5 h-5 mr-2 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                        Panduan & Tips
+                                    </h4>
+                                    <ul id="result-tips" class="list-disc pl-5 text-slate-600 space-y-2 text-sm leading-relaxed"></ul>
+                                </div>
+                                <div class="bg-slate-50 rounded-2xl p-6 border border-slate-100">
+                                    <h4 class="font-bold text-slate-800 mb-3 flex items-center">
+                                        <svg class="w-5 h-5 mr-2 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                        Formulir & Dokumen
+                                    </h4>
+                                    <ul id="result-forms" class="list-disc pl-5 text-slate-600 space-y-2 text-sm leading-relaxed"></ul>
+                                </div>
+                            </div>
+                            
+                            <div class="border-t border-slate-100 pt-6 flex gap-3">
+                                <button onclick="markCurrentAsDone()" class="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-2.5 px-6 rounded-lg transition shadow-sm flex items-center">
+                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                    Tandai Selesai
+                                </button>
+                                <button onclick="document.getElementById('result-area').classList.add('hidden')" class="bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-semibold py-2.5 px-6 rounded-lg transition shadow-sm">
+                                    Sembunyikan
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: RIWAYAT TUGAS (Mapping) -->
+            <div id="tab-riwayat" class="max-w-5xl mx-auto hidden">
+                <div class="flex flex-col md:flex-row md:justify-between md:items-end mb-8 border-b border-slate-200 pb-4">
+                    <div>
+                        <h2 class="text-3xl font-bold text-slate-900 mb-2">Riwayat & Mapping Tugas</h2>
+                        <p class="text-slate-500">Pantau progres pemenuhan dokumen Prosedur Mutu Anda.</p>
+                    </div>
+                    <div class="mt-4 md:mt-0">
+                        <button onclick="resetAll()" class="text-sm bg-red-50 hover:bg-red-100 text-red-600 font-medium px-4 py-2 rounded-lg border border-red-200 transition">
+                            Reset Semua Progres
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="clause-list" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 pb-10">
+                    <!-- List dirender via JS -->
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        // Data lengkap berdasarkan dokumen
+        const clauseData = [
+            { id: "PD.4.1", title: "Manajemen Ketidakberpihakan", tips: ["Seluruh personel wajib bersikap tidak memihak.", "Tandatangani surat pernyataan ketidakberpihakan.", "Arsipkan dokumen untuk mencegah konflik kepentingan."], forms: ["FM.4.1-1 Pernyataan Ketidakberpihakan", "FM.4.1-2 Analisis Risiko Ketidakberpihakan"] },
+            { id: "PD.4.2", title: "Perlindungan Kerahasiaan Informasi", tips: ["Tandatangani perjanjian kerahasiaan bermaterai.", "Gunakan kode pekerjaan untuk identitas pelanggan.", "Akses sistem LIMS wajib menggunakan akun pribadi."], forms: ["FM.4.2-1 Perjanjian Kerahasiaan Informasi"] },
+            { id: "PD.5.1", title: "Dokumen Legalitas", tips: ["Kumpulkan dokumen Akta, NIB, NPWP, SK Kemenkumham.", "Verifikasi kelengkapan dan keabsahan dokumen."], forms: ["FM.5.1-1 Dokumen Legalitas"] },
+            { id: "PD.5.2", title: "Organisasi", tips: ["Susun struktur organisasi laboratorium.", "Terbitkan Surat Tugas untuk pekerjaan di luar deskripsi rutin."], forms: ["FM.5.2-1 Draf Struktur Organisasi", "FM.5.2-2 Draf Daftar Personel", "FM.5.2-3 Surat Tugas"] },
+            { id: "PD.5.3", title: "Lingkup Kegiatan Laboratorium", tips: ["Laksanakan kegiatan dalam ruang lingkup akreditasi.", "Gunakan selalu instruksi kerja yang mutakhir."], forms: ["Lampiran L.03 - Ruang Lingkup Kalibrasi"] },
+            { id: "PD.6.1", title: "Rekrutmen Personel", tips: ["Personel baru tidak diizinkan bekerja mandiri sebelum diotorisasi.", "Wajib mengikuti supervisi terlebih dahulu."], forms: ["FM.6.1-1 Rekrutmen Personel"] },
+            { id: "PD.6.2", title: "Kompetensi, Pelatihan, & Pemantauan", tips: ["Lakukan penilaian kompetensi awal.", "Otorisasi kegiatan mandiri berdasarkan evaluasi pasca pelatihan."], forms: ["FM.6.2-1 Penilaian Kompetensi Awal", "FM.6.2-2 Evaluasi Kompetensi", "FM.6.2-3 Surat Otorisasi Personel"] },
+            { id: "PD.6.3", title: "Pemantauan Lingkungan", tips: ["Pantau suhu dan kelembaban setiap hari.", "Batasi akses ke area laboratorium khusus."], forms: ["FM.6.3-1 Pemantauan Kondisi Lingkungan", "FM.6.3-2 Checklist Pemeliharaan Fasilitas"] },
+            { id: "PD.6.4", title: "Pengelolaan Peralatan", tips: ["Beri label status kalibrasi pada alat ukur.", "Hentikan penggunaan alat rusak dan isolasi.", "Verifikasi alat sebelum digunakan."], forms: ["FM.6.4-1 Daftar Induk Peralatan", "FM.6.4-2 Verifikasi dan Pemeriksaan", "FM.6.4-3 Checklist Pemeliharaan"] },
+            { id: "PD.6.5", title: "Ketertelusuran Metrologi", tips: ["Hasil kalibrasi harus tertelusur ke SI.", "Simpan bukti sertifikat bahan acuan."], forms: ["Sertifikat kalibrasi standar ukur"] },
+            { id: "PD.6.6", title: "Produk dan Jasa Eksternal", tips: ["Evaluasi dan tetapkan daftar pemasok.", "Verifikasi produk saat diterima."], forms: ["FM.6.6-1 Daftar Pemasok Eksternal", "FM.6.6-2 Evaluasi Kesesuaian Produk"] },
+            { id: "PD.7.1", title: "Kaji Ulang Permintaan & Kontrak", tips: ["Tinjau ketersediaan metode dan alat sebelum menyetujui.", "Dokumentasikan PO sebagai bukti persetujuan."], forms: ["FM.7.1-1 Kaji Ulang Permintaan/Kontrak"] },
+            { id: "PD.7.2", title: "Pemilihan & Validasi Metode", tips: ["Pilih metode standar internasional.", "Lakukan validasi akurasi dan presisi lalu buat Instruksi Kerja."], forms: ["FM.7.2-1 Rencana Verifikasi", "FM.7.2-2 Laporan Verifikasi/Validasi"] },
+            { id: "PD.7.3", title: "Penerimaan Barang Uji", tips: ["Periksa visual barang uji saat datang.", "Beri nomor registrasi unik."], forms: ["FM.7.3-1 Formulir Registrasi Kalibrasi"] },
+            { id: "PD.7.4", title: "Penanganan Barang Uji", tips: ["Simpan dan bawa barang uji dengan hati-hati.", "Beri label setelah dikalibrasi."], forms: ["FM.7.4-1 Daftar Identifikasi Barang Uji"] },
+            { id: "PD.7.5", title: "Rekaman Teknis", tips: ["Catat data mentah saat kalibrasi secara jelas.", "Jangan menghapus data asli tanpa justifikasi.", "Simpan dan catat indeksnya."], forms: ["FM.7.5-1 Daftar Indeks Rekaman Teknis"] },
+            { id: "PD.7.6", title: "Evaluasi Ketidakpastian Pengukuran", tips: ["Identifikasi komponen Tipe A dan Tipe B.", "Gunakan tingkat kepercayaan 95% (k)."], forms: ["FM.7.6-1 Ketidakpastian Pengukuran Kalibrasi"] },
+            { id: "PD.7.7", title: "Pemantauan Keabsahan Hasil", tips: ["Susun jadwal pemantauan mutu di awal tahun.", "Wajib ikuti UBAL minimal 1 kali per tahun."], forms: ["FM.7.7-1 Program Pemantauan Mutu", "FM.7.7-2 Lembar Kerja Mutu", "FM.7.7-3 Laporan Uji Banding"] },
+            { id: "PD.7.8", title: "Pelaporan Hasil Kalibrasi", tips: ["Susun draf laporan secara akurat.", "Gunakan kode revisi jika ada amandemen."], forms: ["FM.7.8-1 Draf Sertifikat Kalibrasi"] },
+            { id: "PD.7.9", title: "Keluhan Pelanggan", tips: ["Konfirmasi segera bahwa keluhan ditangani.", "Tunjuk pihak independen untuk investigasi."], forms: ["FM.7.9-1 Penanganan Keluhan Pelanggan"] },
+            { id: "PD.7.10", title: "Pekerjaan Tidak Sesuai", tips: ["Hentikan pekerjaan jika ada ketidaksesuaian.", "Tentukan apakah pekerjaan perlu diulang."], forms: ["FM.7.10-1 Laporan Pekerjaan Tidak Sesuai"] },
+            { id: "PD.7.11", title: "Pengendalian Data Sistem", tips: ["Kunci range sel di Google Sheets.", "Validasi formula kalkulasi di template.", "Backup LIMS otomatis tiap hari."], forms: ["FM.7.11-1 Validasi Lembar Kerja", "FM.7.11-2 Matriks Akses Pengguna"] },
+            { id: "PD.8.1", title: "Dokumentasi Sistem Manajemen", tips: ["Pahami Kebijakan Mutu lab.", "Gunakan hierarki Level 1 hingga 4."], forms: ["Kebijakan Mutu, Sasaran Mutu"] },
+            { id: "PD.8.2", title: "Pengendalian Dokumen", tips: ["Beri stempel TERKENDALI pada dokumen resmi.", "Tarik dokumen kadaluarsa."], forms: ["FM.8.2-1 Daftar Induk Dokumen"] },
+            { id: "PD.8.3", title: "Pengendalian Rekaman", tips: ["Catat rekaman baru di Daftar Induk.", "Musnahkan rekaman lama dengan form resmi."], forms: ["FM.8.3-1 Daftar Induk Rekaman", "FM.8.3-2 Log Backup", "FM.8.3-3 Berita Acara Pemusnahan"] },
+            { id: "PD.8.4", title: "Risiko dan Peluang", tips: ["Identifikasi risiko minimal 1 tahun sekali.", "Evaluasi dengan skala Risk Score."], forms: ["FM.8.4-1 Daftar Risiko & Peluang"] },
+            { id: "PD.8.5", title: "Peningkatan", tips: ["Usulkan perbaikan untuk kurangi kesalahan.", "Evaluasi efektivitas tindakan perbaikan."], forms: ["FM.8.5-1 Usulan Peningkatan", "FM.8.5-2 Laporan Evaluasi Efektivitas"] },
+            { id: "PD.8.6", title: "Tindakan Perbaikan", tips: ["Gunakan analisis 5 Whys atau Fishbone.", "Hilangkan akar masalah agar tidak terulang."], forms: ["FM.8.6-1 Rekaman Tindakan Perbaikan"] },
+            { id: "PD.8.7", title: "Audit Internal", tips: ["Lakukan minimal sekali setahun oleh pihak independen.", "Tindaklanjuti temuan audit."], forms: ["FM.8.7-2 Jadwal Audit", "FM.8.7-4 Daftar Periksa", "FM.8.7-5 Laporan Audit", "FM.8.7-6 Verifikasi Perbaikan"] },
+            { id: "PD.8.8", title: "Kaji Ulang Manajemen", tips: ["Bahas audit dan keluhan pelanggan di rapat.", "Tinjau sasaran mutu tahunan."], forms: ["FM.8.8-1 Perencanaan Kaji Ulang", "FM.8.8-2 Undangan Rapat", "FM.8.8-3 Laporan Kaji Ulang"] }
+        ];
+
+        let currentActiveId = null;
+
+        // Mendapatkan kategori klausul (contoh: PD.4.1 -> Klausul 4)
+        function getCategoryName(id) {
+            const num = id.split('.')[1];
+            const categories = {
+                "4": "Klausul 4: Ketidakberpihakan & Kerahasiaan",
+                "5": "Klausul 5: Persyaratan Struktural",
+                "6": "Klausul 6: Persyaratan Sumber Daya",
+                "7": "Klausul 7: Persyaratan Proses",
+                "8": "Klausul 8: Sistem Manajemen"
+            };
+            return categories[num] || "Klausul ISO 17025";
+        }
+
+        function initData() {
+            let saved = localStorage.getItem('iso17025_sqt_status');
+            let status = saved ? JSON.parse(saved) : {};
+            let dataUpdated = false;
+            
+            clauseData.forEach(c => {
+                if(status[c.id] === undefined) {
+                    status[c.id] = false;
+                    dataUpdated = true;
+                }
+            });
+            if(dataUpdated || !saved) {
+                localStorage.setItem('iso17025_sqt_status', JSON.stringify(status));
+            }
+        }
+
+        function getStatus() {
+            return JSON.parse(localStorage.getItem('iso17025_sqt_status'));
+        }
+
+        function setStatus(id, isCompleted) {
+            let status = getStatus();
+            status[id] = isCompleted;
+            localStorage.setItem('iso17025_sqt_status', JSON.stringify(status));
+            renderList();
+            updateDashboardStats();
+        }
+
+        function resetAll() {
+            if(confirm('Apakah Anda yakin ingin mereset semua tanda selesai?')) {
+                let status = {};
+                clauseData.forEach(c => status[c.id] = false);
+                localStorage.setItem('iso17025_sqt_status', JSON.stringify(status));
+                renderList();
+                updateDashboardStats();
+            }
+        }
+
+        function updateDashboardStats() {
+            const status = getStatus();
+            const total = clauseData.length;
+            const completed = Object.values(status).filter(v => v === true).length;
+            
+            document.getElementById('stat-total').innerText = total;
+            document.getElementById('stat-completed').innerText = completed;
+            
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('stat-date').innerText = new Date().toLocaleDateString('id-ID', options);
+        }
+
+        function renderList() {
+            const listContainer = document.getElementById('clause-list');
+            listContainer.innerHTML = '';
+            const status = getStatus();
+
+            clauseData.forEach(clause => {
+                const isChecked = status[clause.id];
+                
+                const card = document.createElement('div');
+                card.className = `clause-card border rounded-xl p-5 flex items-start space-x-4 ${isChecked ? 'bg-slate-50 border-slate-200 opacity-70' : 'bg-white border-slate-200'}`;
+                
+                card.innerHTML = `
+                    <div class="pt-0.5">
+                        <input type="checkbox" id="chk-${clause.id}" class="w-5 h-5 text-emerald-500 bg-slate-100 border-slate-300 rounded focus:ring-emerald-500 focus:ring-2 cursor-pointer" 
+                            ${isChecked ? 'checked' : ''} 
+                            onchange="setStatus('${clause.id}', this.checked)">
+                    </div>
+                    <div>
+                        <label for="chk-${clause.id}" class="font-bold text-slate-800 cursor-pointer text-lg leading-none block mb-1 ${isChecked ? 'completed-text' : ''}">${clause.id}</label>
+                        <p class="text-sm font-medium text-slate-600 ${isChecked ? 'completed-text' : ''}">${clause.title}</p>
+                    </div>
+                `;
+                listContainer.appendChild(card);
+            });
+        }
+
+        function randomizeClause() {
+            const status = getStatus();
+            const pendingClauses = clauseData.filter(c => !status[c.id]);
+
+            if (pendingClauses.length === 0) {
+                alert("🎉 Hebat! Semua 30 klausul Prosedur Mutu sudah Anda kerjakan/periksa.");
+                document.getElementById('result-area').classList.add('hidden');
+                return;
+            }
+
+            const randomIndex = Math.floor(Math.random() * pendingClauses.length);
+            const selected = pendingClauses[randomIndex];
+            currentActiveId = selected.id;
+
+            // Update UI
+            document.getElementById('result-category').innerText = getCategoryName(selected.id);
+            document.getElementById('result-title').innerHTML = `<span class="text-indigo-600 mr-2">${selected.id}</span> ${selected.title}`;
+            
+            const tipsContainer = document.getElementById('result-tips');
+            tipsContainer.innerHTML = selected.tips.map(tip => `<li>${tip}</li>`).join('');
+            
+            const formsContainer = document.getElementById('result-forms');
+            formsContainer.innerHTML = selected.forms.map(form => `<li>${form}</li>`).join('');
+
+            // Show and Scroll
+            const resultArea = document.getElementById('result-area');
+            resultArea.classList.remove('hidden');
+            resultArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function markCurrentAsDone() {
+            if (currentActiveId) {
+                setStatus(currentActiveId, true);
+                
+                // Ganti UI ke mode sukses sejenak
+                const resultTitle = document.getElementById('result-title');
+                const oldHTML = resultTitle.innerHTML;
+                resultTitle.innerHTML = `<span class="text-emerald-500 flex items-center"><svg class="w-8 h-8 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Disimpan!</span>`;
+                
+                setTimeout(() => {
+                    document.getElementById('result-area').classList.add('hidden');
+                    resultTitle.innerHTML = oldHTML; // kembalikan
+                    currentActiveId = null;
+                }, 800);
+            }
+        }
+
+        function switchTab(tabName) {
+            // Sembunyikan semua tab
+            document.getElementById('tab-dashboard').classList.add('hidden');
+            document.getElementById('tab-riwayat').classList.add('hidden');
+            
+            // Reset styling menu sidebar
+            const btnDash = document.getElementById('nav-dashboard');
+            const btnRiw = document.getElementById('nav-riwayat');
+            
+            btnDash.className = "w-full flex items-center px-4 py-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 rounded-xl font-medium transition-colors";
+            btnRiw.className = "w-full flex items-center px-4 py-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 rounded-xl font-medium transition-colors";
+            
+            // Aktifkan tab dan menu yang dipilih
+            if (tabName === 'dashboard') {
+                document.getElementById('tab-dashboard').classList.remove('hidden');
+                btnDash.className = "w-full flex items-center px-4 py-3 bg-blue-50 text-blue-700 rounded-xl font-medium transition-colors";
+            } else if (tabName === 'riwayat') {
+                document.getElementById('tab-riwayat').classList.remove('hidden');
+                btnRiw.className = "w-full flex items-center px-4 py-3 bg-blue-50 text-blue-700 rounded-xl font-medium transition-colors";
+            }
+        }
+
+        // Initialize application
+        initData();
+        renderList();
+        updateDashboardStats();
+    </script>
+</body>
+</html>
